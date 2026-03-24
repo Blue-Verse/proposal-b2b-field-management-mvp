@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="B2B 현장 관리 솔루션 MVP 반응형 웹 개발 — 프로젝트 제안서" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['SUIT Variable', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              600: '#0284c7',
+              700: '#0369a1'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 30px -18px rgba(15, 23, 42, 0.35)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root { color-scheme: light; font-size: 16px; }
+    body {
+      font-family: 'SUIT Variable', sans-serif;
+      font-size: 1rem;
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(14, 165, 233, 0.08), transparent 42%),
+        radial-gradient(circle at 88% 82%, rgba(2, 132, 199, 0.06), transparent 48%);
+    }
+    .doc-content h1, .doc-content h2, .doc-content h3, .doc-content h4 {
+      color: rgb(15 23 42); font-weight: 700; letter-spacing: -0.01em;
+      line-height: 1.3; margin-top: 1.6em; margin-bottom: 0.7em;
+    }
+    .doc-content h1 { font-size: 2rem; margin-top: 0.2em; }
+    .doc-content h2 { font-size: 1.4rem; }
+    .doc-content h3 { font-size: 1.15rem; }
+    .doc-content p, .doc-content li {
+      color: rgb(51 65 85); line-height: 1.8; font-size: 1rem;
+    }
+    .doc-content p, .doc-content ul, .doc-content ol,
+    .doc-content table, .doc-content pre, .doc-content blockquote {
+      margin-bottom: 1rem;
+    }
+    .doc-content ul, .doc-content ol { padding-left: 1.2rem; }
+    .doc-content ul { list-style: disc; }
+    .doc-content ol { list-style: decimal; }
+    .doc-content table {
+      width: 100%; border-collapse: collapse;
+      border: 1px solid rgb(226 232 240); border-radius: 0.75rem;
+      overflow: hidden; font-size: 1rem;
+    }
+    .doc-content th, .doc-content td {
+      border: 1px solid rgb(226 232 240); padding: 0.7rem 0.8rem;
+      text-align: left; vertical-align: top;
+    }
+    .doc-content th {
+      background: rgb(248 250 252); color: rgb(30 41 59); font-weight: 600;
+    }
+    .doc-content pre, .doc-content code {
+      font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+    }
+    .doc-content pre {
+      background: rgb(15 23 42); color: rgb(226 232 240);
+      padding: 1rem; border-radius: 0.75rem; overflow-x: auto;
+      font-size: 1rem; line-height: 1.65;
+    }
+    .doc-content p code, .doc-content li code,
+    .doc-content td code, .doc-content th code {
+      background: rgb(241 245 249); color: rgb(15 23 42);
+      border: 1px solid rgb(226 232 240); border-radius: 0.4rem;
+      padding: 0.08rem 0.4rem; font-size: 1em;
+    }
+    .doc-content blockquote {
+      border-left: 3px solid rgb(14 165 233); padding-left: 0.85rem;
+      color: rgb(71 85 105); background: rgb(240 249 255);
+      border-radius: 0.5rem; padding-top: 0.55rem; padding-bottom: 0.55rem;
+    }
+    .text-xs { font-size: 1rem !important; }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0.6rem; top: 0.25rem; bottom: 0.25rem;
+      width: 2px; background: rgb(186 230 253);
+    }
+    .timeline-item { position: relative; margin-bottom: 1.75rem; }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -1.65rem; top: 0.35rem;
+      width: 0.75rem; height: 0.75rem; border-radius: 50%;
+      background: rgb(2 132 199); border: 3px solid rgb(224 242 254);
+    }
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    #sidebar-backdrop { display: none; }
+    #sidebar-backdrop.open { display: block; }
+    @media (max-width: 1023px) {
+      #sidebar { transform: translateX(-100%); transition: transform 0.2s ease; position: fixed; top: 0; left: 0; z-index: 40; height: 100vh; width: 80vw; max-width: 320px; }
+      #sidebar.open { transform: translateX(0); }
+    }
+  </style>
+  <title>B2B 현장 관리 솔루션 MVP 반응형 웹 개발 — 프로젝트 제안서</title>
+</head>
+<body class="text-slate-800 font-sans antialiased">
+  <div class="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-10">
+
+    <!-- ─── Header ─── -->
+    <header class="mb-6 rounded-2xl border border-slate-200/70 bg-white/85 px-5 py-3 shadow-soft backdrop-blur">
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="sidebar-toggle" class="lg:hidden inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-700 hover:border-sky-300 hover:text-sky-700">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          메뉴
+        </button>
+        <a href="#home" class="inline-flex items-center shrink-0 text-sm font-bold tracking-tight text-slate-800">
+          프로젝트 제안서
+        </a>
+        <div class="hidden sm:block ml-auto text-right">
+          <p class="text-sm font-semibold tracking-[0.04em] text-sky-700/90">B2B 현장 관리 솔루션 MVP 반응형 웹 개발</p>
+          <p class="text-xs text-slate-400">프로젝트 제안서</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+
+      <!-- ─── Sidebar ─── -->
+      <div id="sidebar-backdrop" class="fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()"></div>
+      <aside id="sidebar" class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 shadow-soft backdrop-blur lg:sticky lg:top-6 lg:h-[calc(100vh-4rem)] lg:overflow-auto">
+        <nav id="nav" class="space-y-1">
+          <a href="#home" data-page="home" class="nav-link block rounded-xl border px-3 py-2 text-sm border-sky-200 bg-sky-50 font-medium text-sky-700">홈</a>
+          <div class="my-3 border-t border-slate-200"></div>
+          <p class="mb-2 mt-1 px-1 text-sm font-semibold tracking-[0.14em] text-slate-400">제안서</p>
+          <a href="#overview" data-page="overview" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">프로젝트 소개</a>
+          <a href="#estimate" data-page="estimate" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">견적서</a>
+          <a href="#manday" data-page="manday" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">공수계산서</a>
+          <a href="#prd" data-page="prd" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">PRD</a>
+          <div class="my-3 border-t border-slate-200"></div>
+          <p class="mb-2 mt-1 px-1 text-sm font-semibold tracking-[0.14em] text-slate-400">일정 & 경험</p>
+          <a href="#timeline" data-page="timeline" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">일정 제안</a>
+          <a href="#portfolio" data-page="portfolio" class="nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900">유사 프로젝트 경험</a>
+        </nav>
+      </aside>
+
+      <!-- ─── Main Content ─── -->
+      <main class="min-w-0">
+
+        <!-- PAGE: Home -->
+        <div id="page-home" class="page-section active space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-6 shadow-soft backdrop-blur md:p-8">
+            <p class="mb-2 text-xs font-semibold tracking-[0.2em] text-sky-700/80">프로젝트 제안서</p>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 md:text-3xl">B2B 현장 관리 솔루션 MVP 반응형 웹 개발</h1>
+            <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">현장 작업자가 앱 설치 없이 URL 접속만으로 업무를 처리하는 웹 기반 현장 관리/수발신 MVP를 구축합니다. 관리자 대시보드와 모바일 웹 폼을 RESTful API 분리 아키텍처로 설계하여, 향후 B2B SaaS 확장의 기반을 마련합니다.</p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <span class="inline-flex rounded-full border border-sky-200 bg-sky-100 px-2.5 py-1 text-sm font-semibold tracking-[0.12em] text-sky-700">16,200,000원</span>
+              <span class="inline-flex rounded-full border border-sky-200 bg-sky-100 px-2.5 py-1 text-sm font-semibold tracking-[0.12em] text-sky-700">60일</span>
+              <span class="inline-flex rounded-full border border-amber-200 bg-amber-100 px-2.5 py-1 text-sm font-semibold tracking-[0.12em] text-amber-700">웹 · SaaS · 반응형</span>
+              <a href="https://www.wishket.com/project/153563/" target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-sm font-medium text-slate-500 transition hover:border-sky-300 hover:text-sky-700">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                원본 공고
+              </a>
+            </div>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <a href="#overview" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">소개</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">프로젝트 소개</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">프로젝트 분석, 핵심 요구사항 정리, 제안 포인트</p>
+            </a>
+            <a href="#estimate" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">비용</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">견적서</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">항목별 비용 산출 근거 및 상세 견적</p>
+            </a>
+            <a href="#manday" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">공수</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">공수계산서</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">기능별 개발 공수(man-day) 산출 내역</p>
+            </a>
+            <a href="#prd" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-amber-100 text-amber-700 border-amber-200">기획</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">PRD</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">기능 요구사항 정의서, 사용자 스토리, 기술 제약</p>
+            </a>
+            <a href="#timeline" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-amber-100 text-amber-700 border-amber-200">일정</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">일정 제안</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">단계별 마일스톤 및 산출물 일정표</p>
+            </a>
+            <a href="#portfolio" class="group rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-amber-100 text-amber-700 border-amber-200">경험</div>
+              <h2 class="text-lg font-semibold tracking-tight text-slate-900 group-hover:text-sky-700">유사 프로젝트 경험</h2>
+              <p class="mt-2 text-sm leading-7 text-slate-600">유사 프로젝트 수행 경험 및 기술 스택</p>
+            </a>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">13+</p>
+              <p class="text-xs text-slate-500">완료 프로젝트</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">7년+</p>
+              <p class="text-xs text-slate-500">개발 경력</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">B2B</p>
+              <p class="text-xs text-slate-500">SaaS 전문</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">100%</p>
+              <p class="text-xs text-slate-500">전담 투입률</p>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-sky-200/70 bg-gradient-to-br from-sky-50 to-brand-50 p-6 text-center shadow-soft md:p-10">
+            <h2 class="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">함께 만들어 가겠습니다</h2>
+            <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-slate-600">각 메뉴를 클릭하시면 상세 내용을 확인하실 수 있습니다.</p>
+          </div>
+        </div>
+
+        <!-- PAGE: 프로젝트 소개 -->
+        <div id="page-overview" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>프로젝트 소개</h1>
+              <blockquote>현장 작업자가 앱 설치 없이 URL 접속만으로 업무를 처리하는 웹 기반 현장 관리/수발신 MVP를 구축합니다. 관리자 대시보드와 모바일 웹 폼을 RESTful API 분리 아키텍처로 설계하여, 향후 B2B SaaS 확장의 기반을 마련합니다.</blockquote>
+
+              <h2>프로젝트 개요</h2>
+              <table>
+                <tr><th>항목</th><th>내용</th></tr>
+                <tr><td>프로젝트명</td><td><a href="https://www.wishket.com/project/153563/" target="_blank" rel="noopener noreferrer" class="text-sky-700 underline decoration-sky-300 hover:decoration-sky-500">B2B 현장 관리 솔루션 MVP 반응형 웹 개발</a></td></tr>
+                <tr><td>카테고리</td><td>웹 · SaaS·솔루션 · 퍼블리싱·반응형</td></tr>
+                <tr><td>제안 금액</td><td>16,200,000원 (VAT 별도)</td></tr>
+                <tr><td>제안 기간</td><td>60일</td></tr>
+                <tr><td>핵심 기술</td><td>React, Node.js (NestJS), PostgreSQL, RESTful API, PWA</td></tr>
+              </table>
+
+              <h2>핵심 요구사항 분석</h2>
+              <ul>
+                <li><strong>관리자(소장)용 대시보드</strong> — 현장·근로자 정보(DB) 관리, 현장별 고유 단축 URL 자동 생성, 알림톡/SMS 발송 연동, 실시간 응답 데이터 수집·현황 확인, 엑셀 다운로드</li>
+                <li><strong>작업자 수신용 모바일 웹 폼</strong> — 앱 설치/로그인 없이 URL 클릭만으로 즉시 폼 진입, 텍스트·체크박스 입력, 스마트폰 현장 사진 첨부·제출</li>
+                <li><strong>FE/BE 완전 분리 아키텍처</strong> — 향후 타 B2B SaaS와의 연동 및 확장을 고려한 RESTful API 기반 설계</li>
+                <li><strong>반응형 웹</strong> — PC Web(Chrome, Edge) + 모바일 Web(iOS, Android 기본 브라우저) 최적화</li>
+                <li><strong>풀 라이프사이클</strong> — 상세 기획 + UI/UX 디자인 + FE/BE 개발 + 서버/DB/인프라 구성</li>
+              </ul>
+
+              <h2>제안 포인트</h2>
+              <p>본 프로젝트는 <strong>관리자 대시보드 + 현장 모바일 폼</strong>이라는 전형적인 B2B 현장 관리 패턴입니다. 유사 구조의 프로젝트를 다수 수행한 경험을 바탕으로 다음과 같이 제안합니다:</p>
+              <ul>
+                <li><strong>토큰 기반 접근 구조</strong> — EZ-Approve 프로젝트에서 구현한 토큰 기반 외부 포탈 패턴을 적용하여, 작업자가 로그인 없이 고유 URL로 즉시 폼에 진입하는 구조를 효율적으로 구축</li>
+                <li><strong>알림톡/SMS 연동 경험</strong> — 뿌리오(Ppurio) API 연동 경험을 활용하여 현장별 단축 URL 발송 기능을 안정적으로 구현</li>
+                <li><strong>B2B SaaS 확장 설계</strong> — Harmony Link의 멀티테넌트 아키텍처 경험을 기반으로, 향후 다수 고객사 운영을 고려한 확장 가능한 데이터 모델 설계</li>
+                <li><strong>기술 내재화 지원</strong> — 내부 주니어 FE 개발자와의 코드 리뷰 및 문서화를 통해 프로젝트 완료 후 자체 유지보수가 가능한 체계 구축</li>
+              </ul>
+
+              <h2>사용 기술 및 툴</h2>
+              <h3>개발 기술</h3>
+              <div class="flex flex-wrap gap-2 not-prose mb-4">
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">React 18</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">Next.js 14</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">TypeScript</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">NestJS</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">PostgreSQL</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">RESTful API</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">TailwindCSS</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">PWA</span>
+                <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sm font-medium text-sky-700">Docker</span>
+              </div>
+              <h3>협업 및 커뮤니케이션</h3>
+              <div class="flex flex-wrap gap-2 not-prose">
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">Slack / 카카오톡</span>
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">Zoom / Google Meet</span>
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">Notion</span>
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">GitHub</span>
+                <span class="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm font-medium text-amber-700">Figma</span>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- PAGE: 견적서 -->
+        <div id="page-estimate" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>견적서</h1>
+              <blockquote>본 견적서는 프로젝트 요구사항 분석을 기반으로 산출되었습니다.</blockquote>
+
+              <h2>견적 요약</h2>
+              <table>
+                <tr><th>항목</th><th>내용</th></tr>
+                <tr><td>프로젝트명</td><td>B2B 현장 관리 솔루션 MVP 반응형 웹 개발</td></tr>
+                <tr><td>제안 금액</td><td><strong>16,200,000원 (VAT 별도)</strong></td></tr>
+                <tr><td>제안 기간</td><td>60일</td></tr>
+                <tr><td>견적 유효기간</td><td>제안일로부터 30일</td></tr>
+              </table>
+
+              <h2>상세 견적 내역</h2>
+              <table>
+                <thead>
+                  <tr><th>구분</th><th>항목</th><th>수량</th><th>단가</th><th>금액</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>기획</td><td>요구사항 분석, 기능 정의, 화면 설계(스토리보드)</td><td>1식</td><td>-</td><td>2,100,000원</td></tr>
+                  <tr><td>디자인</td><td>UI/UX 디자인 (관리자 대시보드 + 모바일 웹 폼, 반응형)</td><td>1식</td><td>-</td><td>2,600,000원</td></tr>
+                  <tr><td>프론트엔드</td><td>관리자 대시보드 + 작업자 모바일 폼 (React, 반응형)</td><td>1식</td><td>-</td><td>4,700,000원</td></tr>
+                  <tr><td>백엔드</td><td>REST API, DB 설계, 단축 URL, 알림톡/SMS, 파일 업로드</td><td>1식</td><td>-</td><td>4,200,000원</td></tr>
+                  <tr><td>QA/배포</td><td>테스트, 서버 구성, 배포, 문서화</td><td>1식</td><td>-</td><td>2,600,000원</td></tr>
+                </tbody>
+                <tfoot>
+                  <tr><th colspan="4">합계 (VAT 별도)</th><th>16,200,000원</th></tr>
+                </tfoot>
+              </table>
+
+              <h2>산정 근거</h2>
+              <ul>
+                <li>관리자 대시보드(현장 관리, 근로자 관리, URL 생성, 알림 발송, 데이터 조회, 엑셀 다운로드) — 약 6~7개 주요 화면</li>
+                <li>작업자 모바일 웹 폼(URL 기반 접근, 동적 폼 렌더링, 사진 첨부) — 약 3~4개 화면</li>
+                <li>알림톡/SMS API 연동 (뿌리오 또는 NHN Cloud 등 국내 메시징 API)</li>
+                <li>단축 URL 생성 엔진 + QR코드 지원</li>
+                <li>엑셀 다운로드 기능 (서버사이드 생성)</li>
+                <li>유사 B2B SaaS 대시보드 프로젝트 수행 경험 기반 효율적 산정</li>
+              </ul>
+
+              <h2>포함 사항</h2>
+              <ul>
+                <li>소스 코드 전체 이관 (GitHub 레포지토리)</li>
+                <li>개발 문서 (API 명세서, DB 스키마, 배포 가이드)</li>
+                <li>1개월 무상 하자 보수</li>
+                <li>배포 환경 세팅 (1회)</li>
+                <li>코드 리뷰 및 기술 내재화 지원 (내부 FE 개발자 대상)</li>
+              </ul>
+
+              <h2>불포함 사항</h2>
+              <ul>
+                <li>서버 호스팅 비용 (AWS 등)</li>
+                <li>도메인 구매 비용</li>
+                <li>외부 유료 API 사용 비용 (알림톡/SMS 발송 비용 등)</li>
+                <li>하자 보수 기간 이후 유지보수</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <!-- PAGE: 공수계산서 -->
+        <div id="page-manday" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>공수계산서</h1>
+              <blockquote>기능별 개발 공수(Man-Day)를 산출하여 일정과 비용의 근거를 제시합니다.</blockquote>
+
+              <h2>공수 요약</h2>
+              <table>
+                <tr><th>구분</th><th>공수 (M/D)</th><th>비율</th></tr>
+                <tr><td>기획/설계</td><td>8 M/D</td><td>14%</td></tr>
+                <tr><td>UI/UX 디자인</td><td>10 M/D</td><td>18%</td></tr>
+                <tr><td>프론트엔드 개발</td><td>18 M/D</td><td>32%</td></tr>
+                <tr><td>백엔드 개발</td><td>15 M/D</td><td>26%</td></tr>
+                <tr><td>QA/배포</td><td>6 M/D</td><td>10%</td></tr>
+                <tr><th>합계</th><th>57 M/D</th><th>100%</th></tr>
+              </table>
+
+              <h2>기능별 상세 공수</h2>
+              <table>
+                <thead>
+                  <tr><th>기능</th><th>세부 작업</th><th>담당</th><th>공수 (M/D)</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td rowspan="3">기획/설계</td><td>요구사항 분석 및 기능 정의서</td><td>기획</td><td>3</td></tr>
+                  <tr><td>화면 설계서(스토리보드) 작성</td><td>기획</td><td>3</td></tr>
+                  <tr><td>DB 스키마 및 API 명세서 설계</td><td>설계</td><td>2</td></tr>
+                  <tr><td rowspan="2">UI/UX 디자인</td><td>관리자 대시보드 디자인 (6~7 화면, 반응형)</td><td>디자인</td><td>6</td></tr>
+                  <tr><td>작업자 모바일 웹 폼 디자인 (3~4 화면)</td><td>디자인</td><td>4</td></tr>
+                  <tr><td rowspan="5">프론트엔드</td><td>관리자 대시보드 — 현장/근로자 CRUD</td><td>FE</td><td>4</td></tr>
+                  <tr><td>관리자 대시보드 — 응답 현황 대시보드/테이블</td><td>FE</td><td>3</td></tr>
+                  <tr><td>관리자 대시보드 — 단축 URL 관리, 발송 UI</td><td>FE</td><td>3</td></tr>
+                  <tr><td>작업자 모바일 웹 폼 (동적 폼, 사진 첨부)</td><td>FE</td><td>5</td></tr>
+                  <tr><td>엑셀 다운로드, 반응형, 공통 컴포넌트</td><td>FE</td><td>3</td></tr>
+                  <tr><td rowspan="5">백엔드</td><td>현장/근로자 CRUD API + DB 모델링</td><td>BE</td><td>3</td></tr>
+                  <tr><td>단축 URL 생성 엔진 + 리다이렉트</td><td>BE</td><td>2</td></tr>
+                  <tr><td>알림톡/SMS 발송 API 연동</td><td>BE</td><td>3</td></tr>
+                  <tr><td>폼 응답 수집 API + 파일(사진) 업로드</td><td>BE</td><td>4</td></tr>
+                  <tr><td>엑셀 생성 API + 인증/권한 관리</td><td>BE</td><td>3</td></tr>
+                  <tr><td rowspan="3">QA/배포</td><td>통합 테스트 및 크로스 브라우저 테스트</td><td>QA</td><td>2</td></tr>
+                  <tr><td>서버 환경 구성 및 배포</td><td>DevOps</td><td>2</td></tr>
+                  <tr><td>문서화 및 인수인계</td><td>공통</td><td>2</td></tr>
+                </tbody>
+              </table>
+
+              <h2>산정 기준</h2>
+              <ul>
+                <li>1 M/D = 8시간 기준 (1인 1일 작업량)</li>
+                <li>주 5일 근무 기준</li>
+                <li>버퍼 10~15% 포함</li>
+                <li>유사 프로젝트 수행 경험 기반 효율적 개발</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <!-- PAGE: PRD -->
+        <div id="page-prd" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>PRD (Product Requirements Document)</h1>
+              <blockquote>프로젝트 요구사항을 정의하고 기능 범위를 명확히 합니다.</blockquote>
+
+              <h2>1. 프로젝트 배경 및 목적</h2>
+              <p>시스템 소프트웨어 개발 전문 법인에서 신규 B2B 사업의 일환으로 '웹 기반 현장 관리/수발신 MVP'를 구축합니다. 핵심 목표는 현장 작업자가 별도의 앱 설치 없이 URL 접속만으로 간편하게 업무를 처리하는 것입니다.</p>
+              <ul>
+                <li>기존 문제: 현장 작업자에게 앱 설치를 요구하면 채택률이 낮아짐</li>
+                <li>해결 방안: URL 기반 모바일 웹 폼으로 진입 장벽 제거</li>
+                <li>향후 비전: MVP 검증 후 B2B SaaS로 확장, 다수 고객사 운영</li>
+              </ul>
+
+              <h2>2. 사용자 정의</h2>
+              <table>
+                <thead>
+                  <tr><th>사용자 유형</th><th>설명</th><th>주요 기능</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>관리자(소장)</td><td>현장을 관리하고 작업자에게 업무를 배포하는 담당자</td><td>현장/근로자 관리, 단축 URL 생성, 알림톡/SMS 발송, 응답 데이터 조회, 엑셀 다운로드</td></tr>
+                  <tr><td>현장 작업자</td><td>현장에서 업무를 수행하고 결과를 보고하는 실무자</td><td>URL 접속 → 폼 입력 → 사진 첨부 → 제출 (로그인 불필요)</td></tr>
+                  <tr><td>시스템 관리자</td><td>전체 시스템 운영 및 설정 담당</td><td>관리자 계정 관리, 시스템 설정, 알림 서비스 설정</td></tr>
+                </tbody>
+              </table>
+
+              <h2>3. 기능 요구사항</h2>
+              <h3>3.1 관리자 대시보드</h3>
+              <ul>
+                <li><strong>[필수]</strong> 현장 정보 CRUD (현장명, 주소, 담당자 등)</li>
+                <li><strong>[필수]</strong> 근로자 정보 CRUD (이름, 연락처, 배정 현장 등)</li>
+                <li><strong>[필수]</strong> 현장별 고유 단축 URL 자동 생성 (+ QR코드)</li>
+                <li><strong>[필수]</strong> 단축 URL을 알림톡/SMS로 대량 발송</li>
+                <li><strong>[필수]</strong> 작업자 응답 데이터 실시간 수집 및 현황 대시보드</li>
+                <li><strong>[필수]</strong> 수집 데이터 엑셀(Excel) 파일 다운로드</li>
+                <li><strong>[선택]</strong> 응답 데이터 필터/검색/정렬</li>
+              </ul>
+              <h3>3.2 작업자 모바일 웹 폼</h3>
+              <ul>
+                <li><strong>[필수]</strong> URL 접속 시 즉시 폼 표시 (로그인/설치 없음)</li>
+                <li><strong>[필수]</strong> 텍스트 입력, 체크박스 선택 등 동적 폼 렌더링</li>
+                <li><strong>[필수]</strong> 스마트폰 카메라로 현장 사진 촬영 및 첨부</li>
+                <li><strong>[필수]</strong> 폼 제출 시 서버로 데이터 실시간 전송</li>
+                <li><strong>[선택]</strong> 오프라인 임시 저장 (PWA Service Worker)</li>
+              </ul>
+              <h3>3.3 알림/메시징</h3>
+              <ul>
+                <li><strong>[필수]</strong> 알림톡/SMS API 연동 (뿌리오 또는 NHN Cloud)</li>
+                <li><strong>[필수]</strong> 발송 이력 관리 및 실패 재발송</li>
+                <li><strong>[선택]</strong> 발송 예약 기능</li>
+              </ul>
+
+              <h2>4. 비기능 요구사항</h2>
+              <table>
+                <thead>
+                  <tr><th>항목</th><th>요구사항</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>성능</td><td>API 응답 시간 500ms 이내, 모바일 폼 로딩 2초 이내</td></tr>
+                  <tr><td>보안</td><td>HTTPS 필수, JWT 인증, SQL Injection/XSS 방어, 파일 업로드 검증</td></tr>
+                  <tr><td>확장성</td><td>RESTful API 분리로 향후 모바일 앱/타 SaaS 연동 가능</td></tr>
+                  <tr><td>호환성</td><td>Chrome, Edge 최신, iOS/Android 기본 브라우저 반응형 지원</td></tr>
+                  <tr><td>접근성</td><td>모바일 터치 영역 최소 44px, 폼 라벨 명확, 색상 대비 WCAG AA</td></tr>
+                </tbody>
+              </table>
+
+              <h2>5. 기술 제약사항</h2>
+              <ul>
+                <li>프런트엔드: React (클라이언트 요구사항 반영)</li>
+                <li>백엔드: Node.js (NestJS) — 클라이언트 내부 FE 개발자 기술 내재화 고려</li>
+                <li>FE/BE 완전 분리 RESTful API 아키텍처 (필수)</li>
+                <li>향후 B2B SaaS 확장을 위한 멀티테넌트 고려 설계</li>
+              </ul>
+
+              <h2>6. 범위 외 사항 (Out of Scope)</h2>
+              <ul>
+                <li>네이티브 모바일 앱 개발 (iOS/Android)</li>
+                <li>결제/과금 시스템</li>
+                <li>실시간 채팅/메신저 기능</li>
+                <li>GPS 기반 위치 추적</li>
+                <li>다국어 지원</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+
+        <!-- PAGE: 일정 제안 -->
+        <div id="page-timeline" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>일정 제안</h1>
+              <blockquote>총 60일 기준 단계별 마일스톤 및 산출물을 제안합니다.</blockquote>
+
+              <h2>전체 일정 요약</h2>
+              <table>
+                <thead>
+                  <tr><th>단계</th><th>기간</th><th>주요 산출물</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Phase 1: 기획/설계</td><td>Day 1–10</td><td>요구사항 정의서, 기능 명세서, 화면 설계서, DB 스키마, API 명세서</td></tr>
+                  <tr><td>Phase 2: UI/UX 디자인</td><td>Day 8–18</td><td>Figma 디자인 원본 (관리자 대시보드 + 모바일 폼)</td></tr>
+                  <tr><td>Phase 3: FE/BE 개발</td><td>Day 15–48</td><td>프론트엔드 소스, 백엔드 API, DB 마이그레이션</td></tr>
+                  <tr><td>Phase 4: 통합/QA</td><td>Day 45–55</td><td>통합 테스트 결과, 버그 수정 로그</td></tr>
+                  <tr><td>Phase 5: 배포/인수인계</td><td>Day 53–60</td><td>운영 서버 배포, 배포 가이드, 코드 리뷰 세션</td></tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <h2 class="mb-4 text-sm font-semibold tracking-[0.14em] text-slate-500">상세 타임라인</h2>
+            <div class="timeline">
+              <div class="timeline-item">
+                <p class="text-sm font-semibold tracking-[0.14em] text-sky-700">PHASE 1</p>
+                <h4 class="text-base font-semibold text-slate-900">기획 및 설계</h4>
+                <p class="mb-1 text-xs font-semibold text-amber-600">Day 1–10 (10일)</p>
+                <p class="text-sm leading-7 text-slate-600">요구사항 상세화, 화면 설계서(스토리보드) 작성, DB 스키마 및 API 명세서 설계</p>
+                <ul class="mt-2 list-disc pl-5 text-sm text-slate-500">
+                  <li>산출물: 요구사항 정의서, 기능 명세서, 화면 설계서, ERD, API 명세서</li>
+                  <li>검수 기준: 클라이언트 리뷰 후 승인</li>
+                </ul>
+              </div>
+              <div class="timeline-item">
+                <p class="text-sm font-semibold tracking-[0.14em] text-sky-700">PHASE 2</p>
+                <h4 class="text-base font-semibold text-slate-900">UI/UX 디자인</h4>
+                <p class="mb-1 text-xs font-semibold text-amber-600">Day 8–18 (11일, Phase 1과 일부 병행)</p>
+                <p class="text-sm leading-7 text-slate-600">관리자 대시보드 및 작업자 모바일 웹 폼 Figma 디자인, 반응형 레이아웃 확정</p>
+                <ul class="mt-2 list-disc pl-5 text-sm text-slate-500">
+                  <li>산출물: Figma 디자인 원본 파일, 디자인 시스템(컬러, 타이포, 컴포넌트)</li>
+                  <li>검수 기준: 디자인 리뷰 2회 (초안 + 수정본)</li>
+                </ul>
+              </div>
+              <div class="timeline-item">
+                <p class="text-sm font-semibold tracking-[0.14em] text-sky-700">PHASE 3</p>
+                <h4 class="text-base font-semibold text-slate-900">프론트엔드 + 백엔드 개발</h4>
+                <p class="mb-1 text-xs font-semibold text-amber-600">Day 15–48 (34일)</p>
+                <p class="text-sm leading-7 text-slate-600">React 프론트엔드 개발 (관리자 대시보드 + 작업자 폼), NestJS 백엔드 API 개발 (CRUD, 단축 URL, 알림톡/SMS, 파일 업로드, 엑셀 생성)</p>
+                <ul class="mt-2 list-disc pl-5 text-sm text-slate-500">
+                  <li>산출물: FE/BE 소스 코드, DB 마이그레이션, API 문서</li>
+                  <li>중간 검수: Day 30 — 관리자 대시보드 핵심 기능 데모</li>
+                </ul>
+              </div>
+              <div class="timeline-item">
+                <p class="text-sm font-semibold tracking-[0.14em] text-sky-700">PHASE 4</p>
+                <h4 class="text-base font-semibold text-slate-900">통합 테스트 및 QA</h4>
+                <p class="mb-1 text-xs font-semibold text-amber-600">Day 45–55 (11일)</p>
+                <p class="text-sm leading-7 text-slate-600">FE/BE 통합 테스트, 크로스 브라우저 테스트(Chrome, Edge, iOS/Android), 버그 수정</p>
+                <ul class="mt-2 list-disc pl-5 text-sm text-slate-500">
+                  <li>산출물: 테스트 결과 보고서, 버그 수정 로그</li>
+                </ul>
+              </div>
+              <div class="timeline-item">
+                <p class="text-sm font-semibold tracking-[0.14em] text-sky-700">PHASE 5</p>
+                <h4 class="text-base font-semibold text-slate-900">배포 및 인수인계</h4>
+                <p class="mb-1 text-xs font-semibold text-amber-600">Day 53–60 (8일)</p>
+                <p class="text-sm leading-7 text-slate-600">운영 서버 배포, 배포 가이드 작성, 내부 FE 개발자 코드 리뷰 세션(2회), 기술 내재화 문서 전달</p>
+                <ul class="mt-2 list-disc pl-5 text-sm text-slate-500">
+                  <li>산출물: 배포 가이드, 운영 매뉴얼, 코드 리뷰 노트</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h2>마일스톤 체크포인트</h2>
+              <table>
+                <thead>
+                  <tr><th>마일스톤</th><th>시점</th><th>검수 기준</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>M1: 설계 완료</td><td>Day 10</td><td>요구사항 정의서, 화면 설계서, API 명세서 승인</td></tr>
+                  <tr><td>M2: 디자인 확정</td><td>Day 18</td><td>Figma 디자인 최종 승인</td></tr>
+                  <tr><td>M3: 중간 데모</td><td>Day 30</td><td>관리자 대시보드 핵심 기능 동작 확인</td></tr>
+                  <tr><td>M4: 개발 완료</td><td>Day 48</td><td>전체 기능 구현 및 내부 테스트 통과</td></tr>
+                  <tr><td>M5: 최종 납품</td><td>Day 60</td><td>운영 배포 + 소스 코드 이관 + 문서 전달</td></tr>
+                </tbody>
+              </table>
+
+              <h2>커뮤니케이션 계획</h2>
+              <table>
+                <tr><th>항목</th><th>방식</th><th>주기</th></tr>
+                <tr><td>일일 진행 공유</td><td>Slack / 카카오톡</td><td>매일</td></tr>
+                <tr><td>주간 미팅</td><td>Zoom / Google Meet</td><td>주 1회</td></tr>
+                <tr><td>마일스톤 리뷰</td><td>화면 공유 + 문서</td><td>단계 완료 시</td></tr>
+                <tr><td>이슈 트래킹</td><td>GitHub Issues</td><td>상시</td></tr>
+                <tr><td>코드 리뷰</td><td>GitHub PR 리뷰</td><td>주 2회 (내부 FE 개발자 참여)</td></tr>
+              </table>
+            </article>
+          </div>
+        </div>
+
+        <!-- PAGE: 포트폴리오 -->
+        <div id="page-portfolio" class="page-section space-y-6">
+          <div class="rounded-2xl border border-slate-200/70 bg-white/95 p-5 shadow-soft backdrop-blur md:p-8">
+            <article class="doc-content">
+              <h1>유사 프로젝트 경험</h1>
+              <blockquote>본 프로젝트와 유사한 기능/기술 스택을 활용한 수행 경험을 소개합니다.</blockquote>
+            </article>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">13+</p>
+              <p class="text-xs text-slate-500">완료 프로젝트</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">7년+</p>
+              <p class="text-xs text-slate-500">개발 경력</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">B2B</p>
+              <p class="text-xs text-slate-500">SaaS 전문</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-4 text-center shadow-soft backdrop-blur">
+              <p class="text-2xl font-bold text-sky-700">100%</p>
+              <p class="text-xs text-slate-500">전담 투입률</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <!-- EZ-Approve -->
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft backdrop-blur md:p-8">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">B2B SaaS</div>
+              <h3 class="text-lg font-semibold tracking-tight text-slate-900">EZ-Approve (전자결재 · 업무 관리 올인원 플랫폼)</h3>
+              <p class="mt-1 text-xs text-slate-400">B2B SaaS · 2026.01~2026.03 (약 9주)</p>
+              <div class="mt-3 doc-content">
+                <h4>프로젝트 개요</h4>
+                <p>기업용 전자결재·업무 관리 올인원 SaaS 플랫폼. 다단계 결재 엔진(8종 결재 액션), Lexical 리치 에디터(170 파일), 실시간 공동 편집(CRDT/Yjs), 토큰 기반 외부 포탈을 구축.</p>
+                <h4>핵심 기능</h4>
+                <ul>
+                  <li>다단계 전자결재 워크플로우 (상신, 합의, 전결, 선결, 후결, 대결)</li>
+                  <li>토큰 기반 외부 셀프서비스 포탈 — 로그인 없이 고유 URL로 접근</li>
+                  <li>7 사용자 역할, 6계층 보안 (JWT, 2FA, CASL RBAC)</li>
+                  <li>알림톡/SMS 발송 연동 (Ppurio API)</li>
+                  <li>PR 504건, 50+ 페이지, 120-150 API 엔드포인트</li>
+                </ul>
+                <h4>본 프로젝트와의 유사점</h4>
+                <ul>
+                  <li><strong>토큰 기반 URL 접근 패턴</strong> — 작업자가 로그인 없이 고유 URL로 폼에 접근하는 구조와 동일</li>
+                  <li><strong>관리자 대시보드</strong> — 다중 역할 기반 CRUD 관리 화면</li>
+                  <li><strong>알림톡/SMS 연동</strong> — Ppurio API 연동 경험 직접 활용 가능</li>
+                  <li><strong>RESTful API 완전 분리</strong> — Next.js + NestJS 분리 아키텍처</li>
+                </ul>
+                <h4>기술 스택</h4>
+                <div class="flex flex-wrap gap-1.5 not-prose">
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">Next.js 13</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">NestJS 10</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">TypeScript</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">MySQL</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">MUI v5</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">Docker</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Harmony Link -->
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft backdrop-blur md:p-8">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">B2B SaaS · 헬스케어</div>
+              <h3 class="text-lg font-semibold tracking-tight text-slate-900">Harmony Link (시니어 주간보호 관리 플랫폼)</h3>
+              <p class="mt-1 text-xs text-slate-400">B2B SaaS · 2025 (약 6개월)</p>
+              <div class="mt-3 doc-content">
+                <h4>프로젝트 개요</h4>
+                <p>노인 주간보호센터 통합 관리 플랫폼. 케어 로그, 투약 관리, 보호자 커뮤니케이션, AI 건강 분석, 멀티테넌트 아키텍처로 다수 시설 운영을 지원.</p>
+                <h4>핵심 기능</h4>
+                <ul>
+                  <li>현장(시설) 관리 + 돌봄 대상자 정보 관리</li>
+                  <li>사진 첨부 기반 케어 기록 관리</li>
+                  <li>보호자 초대 코드 기반 URL 접근 (앱 미설치 사용자 대응)</li>
+                  <li>실시간 푸시 알림 (FCM)</li>
+                  <li>멀티테넌트 아키텍처 — 다수 시설 독립 운영</li>
+                  <li>133K+ LOC, 140+ API 엔드포인트</li>
+                </ul>
+                <h4>본 프로젝트와의 유사점</h4>
+                <ul>
+                  <li><strong>현장 관리 패턴</strong> — 시설(현장)별 관리 + 대상자(근로자) 관리 구조가 동일</li>
+                  <li><strong>사진 첨부 기능</strong> — 모바일에서 사진 촬영·첨부·제출 플로우 경험</li>
+                  <li><strong>멀티테넌트 확장 설계</strong> — 향후 B2B SaaS 확장 시 동일 패턴 적용</li>
+                  <li><strong>모바일 최적화</strong> — Flutter 기반 6 플랫폼 지원 경험</li>
+                </ul>
+                <h4>기술 스택</h4>
+                <div class="flex flex-wrap gap-1.5 not-prose">
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">Flutter</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">NestJS</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">Next.js</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">TypeScript</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">MySQL</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">AWS CDK</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Series-B -->
+            <div class="rounded-2xl border border-slate-200/70 bg-white/90 p-5 shadow-soft backdrop-blur md:p-8">
+              <div class="mb-3 inline-flex rounded-full border px-2.5 py-1 text-sm font-semibold tracking-[0.12em] bg-sky-100 text-sky-700 border-sky-200">B2B SaaS · 핀테크</div>
+              <h3 class="text-lg font-semibold tracking-tight text-slate-900">Series-B (투자조합 관리 · 업무 자동화 올인원)</h3>
+              <p class="mt-1 text-xs text-slate-400">핀테크 · 2023.11~2024.12 (14개월)</p>
+              <div class="mt-3 doc-content">
+                <h4>프로젝트 개요</h4>
+                <p>VC 펀드 라이프사이클 관리 B2B SaaS. GP/LP/스타트업 3종 사용자 대시보드, AI 투자 보고서 생성, 규제 보고서 자동 제출, 엑셀 대량 다운로드 기능을 구축.</p>
+                <h4>핵심 기능</h4>
+                <ul>
+                  <li>역할별 대시보드 (GP/LP 분리 뷰)</li>
+                  <li>엑셀 다운로드 및 대량 데이터 관리</li>
+                  <li>규제 양식 5종 자동 생성 및 SFTP 제출</li>
+                  <li>5계층 보안 (JWT, 2FA, KYC, IP 화이트리스트, GeoIP)</li>
+                  <li>PR 1,652건, 50+ 페이지, 200-300+ API 엔드포인트</li>
+                </ul>
+                <h4>본 프로젝트와의 유사점</h4>
+                <ul>
+                  <li><strong>대시보드 + 데이터 관리</strong> — 역할별 데이터 조회·관리 패턴</li>
+                  <li><strong>엑셀 다운로드</strong> — 서버사이드 엑셀 생성 경험 직접 활용</li>
+                  <li><strong>대규모 B2B SaaS</strong> — 확장 가능한 아키텍처 설계 경험</li>
+                </ul>
+                <h4>기술 스택</h4>
+                <div class="flex flex-wrap gap-1.5 not-prose">
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">Next.js 13</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">NestJS 10</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">TypeScript</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">MySQL</span>
+                  <span class="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-sm text-slate-500">AWS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-sky-200/70 bg-gradient-to-br from-sky-50 to-brand-50 p-6 text-center shadow-soft md:p-10">
+            <h2 class="text-xl font-bold tracking-tight text-slate-900 md:text-2xl">함께 만들어 가겠습니다</h2>
+            <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-slate-600">프로젝트에 대해 더 자세한 논의를 원하시면 미팅을 신청해 주세요.</p>
+          </div>
+        </div>
+
+        <!-- Bottom Page Navigation -->
+        <div id="page-nav" class="mt-6 flex items-center justify-between gap-4" style="display:none;">
+          <a id="nav-prev" href="#home"
+             class="group flex items-center gap-2 rounded-2xl border border-slate-200/70 bg-white/90 px-5 py-3 shadow-soft backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white">
+            <svg class="w-5 h-5 text-slate-400 transition group-hover:text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <span>
+              <span class="block text-xs text-slate-400">이전</span>
+              <span id="nav-prev-label" class="block text-sm font-semibold text-slate-700 group-hover:text-sky-700">홈</span>
+            </span>
+          </a>
+          <a id="nav-next" href="#overview"
+             class="group flex items-center gap-2 rounded-2xl border border-slate-200/70 bg-white/90 px-5 py-3 shadow-soft backdrop-blur transition hover:-translate-y-0.5 hover:border-sky-200 hover:bg-white text-right ml-auto">
+            <span>
+              <span class="block text-xs text-slate-400">다음</span>
+              <span id="nav-next-label" class="block text-sm font-semibold text-slate-700 group-hover:text-sky-700">프로젝트 소개</span>
+            </span>
+            <svg class="w-5 h-5 text-slate-400 transition group-hover:text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+
+      </main>
+    </div>
+
+    <footer class="mt-10 border-t border-slate-200 pt-6 text-xs text-slate-500">
+      &copy; 2026 &middot; 본 제안서는 B2B 현장 관리 솔루션 MVP 반응형 웹 개발 프로젝트를 위해 작성되었습니다.
+    </footer>
+  </div>
+
+  <script>
+    const pages = ['home', 'overview', 'estimate', 'manday', 'prd', 'timeline', 'portfolio'];
+    const pageLabels = {
+      home: '홈', overview: '프로젝트 소개', estimate: '견적서',
+      manday: '공수계산서', prd: 'PRD', timeline: '일정 제안', portfolio: '유사 프로젝트 경험'
+    };
+
+    function navigate(pageId) {
+      if (!pages.includes(pageId)) pageId = 'home';
+      document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('page-' + pageId);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.dataset.page === pageId) {
+          link.className = 'nav-link block rounded-xl border px-3 py-2 text-sm border-sky-200 bg-sky-50 font-medium text-sky-700';
+        } else {
+          link.className = 'nav-link block rounded-xl border border-transparent px-3 py-2 text-sm text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900';
+        }
+      });
+      updatePageNav(pageId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      closeSidebar();
+    }
+
+    function updatePageNav(pageId) {
+      const nav = document.getElementById('page-nav');
+      const idx = pages.indexOf(pageId);
+      const prevBtn = document.getElementById('nav-prev');
+      const nextBtn = document.getElementById('nav-next');
+      const prevLabel = document.getElementById('nav-prev-label');
+      const nextLabel = document.getElementById('nav-next-label');
+      nav.style.display = (pageId === 'home') ? 'none' : 'flex';
+      if (idx > 0) {
+        prevBtn.href = '#' + pages[idx - 1];
+        prevLabel.textContent = pageLabels[pages[idx - 1]];
+        prevBtn.style.visibility = 'visible';
+      } else {
+        prevBtn.style.visibility = 'hidden';
+      }
+      if (idx < pages.length - 1) {
+        nextBtn.href = '#' + pages[idx + 1];
+        nextLabel.textContent = pageLabels[pages[idx + 1]];
+        nextBtn.style.visibility = 'visible';
+      } else {
+        nextBtn.style.visibility = 'hidden';
+      }
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-backdrop').classList.remove('open');
+    }
+
+    function handleHash() {
+      const hash = (location.hash || '#home').replace('#', '');
+      navigate(hash);
+    }
+    window.addEventListener('hashchange', handleHash);
+    window.addEventListener('DOMContentLoaded', handleHash);
+
+    document.getElementById('sidebar-toggle').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebar-backdrop').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
